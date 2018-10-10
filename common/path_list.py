@@ -10,5 +10,7 @@ def get():
     
     reg_path_list.append({'method':'GET', 'func':'/revert', 'handler':api_func.revert})
     
+    reg_path_list.append({'method':'GET', 'func':'/accrue_bonuses', 'handler':api_func.accrue_bonuses})
+    
     return reg_path_list
 
