@@ -7,7 +7,7 @@ def info(param):
 
     purchases = get_purchases(id_card)  
 
-    res = BonusOperations.select(BonusOperations.id_card, BonusOperations.date_time, BonusOperations.summ, BonusOperations.comment).where(BonusOperations.id_card==id_card).order_by(BonusOperations.date_time.desc())
+    res = BonusOperations.select(BonusOperations.id_card, BonusOperations.date_time, BonusOperations.summ, BonusOperations.comment, BonusOperations.id_purchases).where(BonusOperations.id_card==id_card).order_by(BonusOperations.date_time.desc())
     
     bonus_opperations = list(res.dicts()) 
     
@@ -61,7 +61,7 @@ def purchase(param):
     
     if summ_dics>0:
         comment = 'Списание бонусов'
-        new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=-(summ_dics), comment=comment)
+        new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=-(summ_dics), comment=comment, id_purchases=new_op_id)
         
         new_bonus_op_del_id = new_bonus_op.id
 
@@ -71,7 +71,7 @@ def purchase(param):
 
     comment = 'Начисление бонусов'
 
-    new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=(summ-summ_dics)*level['perc']/100, comment=comment)
+    new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=(summ-summ_dics)*level['perc']/100, comment=comment, id_purchases=new_op_id)
 
     new_bonus_op_add_id = new_bonus_op.id
 
@@ -86,7 +86,7 @@ def revert(param):
     
     comment = 'Отмена начисления бонусов'
 
-    new_bonus_op = BonusOperations.create(id_card=purchases[0]['id_card'], date_time=purchases[0]['date_time'], summ=-(purchases[0]['summ']), comment=comment)
+    new_bonus_op = BonusOperations.create(id_card=purchases[0]['id_card'], date_time=purchases[0]['date_time'], summ=-(purchases[0]['summ']), comment=comment, id_purchases=purchases[0]['id_purchases'])
 
     return {'new_bonus_op_id':new_bonus_op.id}
 

@@ -29,6 +29,7 @@ class BonusOperations(BaseModel):
     date_time = DateTimeField()
     summ = DecimalField()
     comment = TextField()
+    id_purchases = IntegerField()
 
     class Meta:
         table_name = 'bonus_operations'
