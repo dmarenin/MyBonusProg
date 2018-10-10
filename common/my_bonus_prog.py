@@ -1,8 +1,9 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 from urllib.parse import urlparse, parse_qs
+from datetime import datetime, date
+import decimal
 #import _thread
-
 from common import api_func, path_list
 
 class MyBonusProgException(Exception):
@@ -66,7 +67,7 @@ class MyBonusProg():
             if not res:
                 res = []
 
-            res = json.dumps(res, default=common.json_serial)
+            res = json.dumps(res, default=json_serial)
             content_type = "application/json"
 
             try:
@@ -86,4 +87,13 @@ class MyBonusProg():
     def init_pathmap(self):
         for x in path_list.get():
             self.register(x['method'], x['func'], x['handler'])
+
+def json_serial(obj):
+  if isinstance(obj, (datetime, date)):
+    return obj.isoformat()
+
+  if isinstance(obj, decimal.Decimal):
+    return float(obj)
+
+  raise TypeError("Type is not serializable %s" % type(obj))
 
