@@ -5,21 +5,13 @@ from datetime import datetime, date, timedelta
 def info(param):
     id_card = kwargs_get(param, 'id_card')
 
-    purchases = get_purchases(id_card)  
+    bonus_info = get_bonus_info(id_card)
+    
+    summ = bonus_info['summ']
+    summ_availible = bonus_info['summ_availible'] 
+    bonus_opperations = bonus_info['bonus_opperations']
 
-    res = BonusOperations.select(BonusOperations.id_card, BonusOperations.date_time, BonusOperations.summ, BonusOperations.comment, BonusOperations.id_purchases).where(BonusOperations.id_card==id_card).order_by(BonusOperations.date_time.desc())
-    
-    bonus_opperations = list(res.dicts()) 
-    
-    summ = 0
-    summ_availible = 0 
-    for x in bonus_opperations:
-        x['date_time'] = datetime.fromtimestamp(x['date_time']/1000000) 
-        if (datetime.now()-x['date_time']).days<MAX_DAYS:
-            summ += x['summ']
-            if (datetime.now()-x['date_time']).days<MIN_DAYS:
-                continue
-            summ_availible += x['summ']
+    purchases = get_purchases(id_card)  
 
     summ_purchases = 0
     for x in purchases:
@@ -59,9 +51,18 @@ def purchase(param):
     if new_op_id is None:
         raise Exception('new_op_id is none')
     
+    bonus_info = get_bonus_info(id_card)
+    
+    #summ = bonus_info['summ']
+    summ_availible = bonus_info['summ_availible'] 
+
+    if summ_dics>summ_availible:
+        raise Exception('summ_dics>summ_availible')
+
+    new_bonus_op_del_id = None
     if summ_dics>0:
-        comment = 'Списание бонусов'
-        new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=-(summ_dics), comment=comment, id_purchases=new_op_id)
+        com = 'Списание бонусов '+comment
+        new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=-(summ_dics), comment=com, id_purchases=new_op_id)
         
         new_bonus_op_del_id = new_bonus_op.id
 
@@ -69,9 +70,9 @@ def purchase(param):
 
     level = get_level(purchases)
 
-    comment = 'Начисление бонусов'
+    com = 'Начисление бонусов '+comment
 
-    new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=(summ-summ_dics)*level['perc']/100, comment=comment, id_purchases=new_op_id)
+    new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=(summ-summ_dics)*level['perc']/100, comment=com, id_purchases=new_op_id)
 
     new_bonus_op_add_id = new_bonus_op.id
 
@@ -84,7 +85,7 @@ def revert(param):
     
     purchases = list(res.dicts())
     
-    comment = 'Отмена начисления бонусов'
+    comment = 'Отмена начисления бонусов '+purchases[0]['id_purchases']
 
     new_bonus_op = BonusOperations.create(id_card=purchases[0]['id_card'], date_time=purchases[0]['date_time'], summ=-(purchases[0]['summ']), comment=comment, id_purchases=purchases[0]['id_purchases'])
 
@@ -100,6 +101,24 @@ def accrue_bonuses(param):
     new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=summ, comment=comment)
 
     return {'new_bonus_op_id':new_bonus_op.id}
+
+
+def get_bonus_info(id_card):
+    res = BonusOperations.select(BonusOperations.id_card, BonusOperations.date_time, BonusOperations.summ, BonusOperations.comment, BonusOperations.id_purchases).where(BonusOperations.id_card==id_card).order_by(BonusOperations.date_time.desc())
+    
+    bonus_opperations = list(res.dicts()) 
+    
+    summ = 0
+    summ_availible = 0 
+    for x in bonus_opperations:
+        x['date_time'] = datetime.fromtimestamp(x['date_time']/1000000) 
+        if (datetime.now()-x['date_time']).days<MAX_DAYS:
+            summ += x['summ']
+            if (datetime.now()-x['date_time']).days<MIN_DAYS:
+                continue
+            summ_availible += x['summ']
+
+    return {'summ':summ, 'summ_availible':summ_availible, 'bonus_opperations':bonus_opperations}
 
 
 def get_purchases(id_card, days=MAX_DAYS):
