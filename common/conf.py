@@ -1,9 +1,11 @@
+LOG_FILE_PATH = 'D:\\repos\\MyBonusProg\\common\\log.log'
+#LOG_FILE_PATH = '/usr/local/www/MyBonusProg/log.log'
 
 MYBONUSPROG_IP = '0.0.0.0' 
 MYBONUSPROG_PORT = 13000
 
 DB_PATH = 'D:\\repos\\MyBonusProg\\common\\db.db'
-#DB_PATH = '/usr/local/www/MyBonusProg/common/db.db'
+#DB_PATH = '/usr/local/www/MyBonusProg/db.db'
 
 SETTING_MAX_SUMM_PERCENT = 25 
 

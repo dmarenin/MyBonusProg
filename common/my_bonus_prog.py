@@ -4,7 +4,14 @@ from urllib.parse import urlparse, parse_qs
 from datetime import datetime, date
 import decimal
 #import _thread
-from common import api_func, path_list
+from common import api_func, path_list, conf
+import logging
+
+
+FORMAT = '%(asctime)s - %(levelname)s - %(message)s \n\r'
+
+logging.basicConfig(filename=conf.LOG_FILE_PATH,level=logging.DEBUG, format=FORMAT)
+
 
 class MyBonusProgException(Exception):
     pass
@@ -19,11 +26,17 @@ class MyBonusProgHandler(BaseHTTPRequestHandler):
 
         self.send_header("Content-type", "text/plain; charset=utf-8")
 
+        func_log = logging.info
+
         self.end_headers()
         if (code != 200):
             print(message)
             message = message
 
+            func_log = logging.error
+
+        func_log('smart_response: ' + message)
+        
         return self.wfile.write(message.encode())
 
     def do_GET(self):
@@ -49,6 +62,8 @@ class MyBonusProg():
     def callback(self, path, qs, handler):
         while path and path[0] == '/':
 
+            logging.info('callback: '+handler.requestline)
+
             func = self.pathmap.get(path)
             if func is None:
                 return handler.smart_response(404, "Не найден метод: "+str(path))
@@ -63,7 +78,7 @@ class MyBonusProg():
                 return handler.smart_response(500, "%s" % e)
             except Exception as e:
                 return handler.smart_response(500, "Неожиданная ошибка: %s" % e)
-
+            
             if not res:
                 res = []
 
