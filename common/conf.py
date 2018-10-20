@@ -18,3 +18,4 @@ LEVELS = {1:{'perc':5, 'name':'5 %', 'min_summ':1, 'max_summ':7999},
 MAX_DAYS = 90
 MIN_DAYS = 14
 
+
