@@ -1,5 +1,5 @@
 from peewee import *
-from common.conf import *
+from server.conf import DB_PATH
 
 DB = SqliteDatabase(DB_PATH)
 
@@ -22,7 +22,7 @@ class Purchases(BaseModel):
     class Meta:
         table_name = 'purchases'
 
-class BonusOperations(BaseModel):
+class Bonus_Operations(BaseModel):
     rowid = IntegerField()
     
     id_card = TextField()

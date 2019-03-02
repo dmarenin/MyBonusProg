@@ -1,12 +1,3 @@
+*.pyc
 
-MyBonusProg.pyproj
-MyBonusProg.sln
-.vs/MyBonusProg/v14/.suo
-common/__pycache__/api_func.cpython-36.pyc
-common/__pycache__/api_func.cpython-36.pyc.51995536
-common/__pycache__/models.cpython-36.pyc
-common/__pycache__/path_list.cpython-36.pyc
-common/__pycache__/api_func.cpython-36.pyc.53699472
-common/__pycache__/my_bonus_prog.cpython-36.pyc
-*.pyc*
 

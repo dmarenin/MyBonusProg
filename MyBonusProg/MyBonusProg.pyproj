@@ -1,0 +1,54 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>9a7f199d-dc37-4439-bba7-a4baee4490de</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>runserver.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>MyBonusProg</Name>
+    <RootNamespace>MyBonusProg</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="orm\models.py" />
+    <Compile Include="runserver.py" />
+    <Compile Include="server\api_func.py" />
+    <Compile Include="server\conf.py" />
+    <Compile Include="server\my_bonus_prog.py" />
+    <Compile Include="server\views.py" />
+    <Compile Include="server\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="cfe\" />
+    <Folder Include="db\" />
+    <Folder Include="orm\" />
+    <Folder Include="server\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="cfe\MyBonusProg_Retail2.cfe" />
+    <Content Include="db.db" />
+    <Content Include="db\db.sql" />
+    <Content Include="log.log" />
+    <Content Include="start.sh" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

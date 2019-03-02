@@ -1,6 +1,7 @@
-from common.models import *
+from orm.models import *
 from datetime import datetime, date, timedelta
-#from common.conf import *
+from server.conf import *
+
 
 def info(param):
     id_card = kwargs_get(param, 'id_card')
@@ -15,9 +16,6 @@ def info(param):
 
     summ_purchases = 0
     for x in purchases:
-        #if (datetime.now()-x['date_time']).days<MIN_DAYS:
-        #    continue
-
         if (datetime.now()-x['date_time']).days>MAX_DAYS:
             break
         
@@ -53,7 +51,6 @@ def purchase(param):
     
     bonus_info = get_bonus_info(id_card)
     
-    #summ = bonus_info['summ']
     summ_availible = bonus_info['summ_availible'] 
 
     if summ_dics>summ_availible:
@@ -62,7 +59,7 @@ def purchase(param):
     new_bonus_op_del_id = None
     if summ_dics>0:
         com = 'Списание бонусов '+comment
-        new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=-(summ_dics), comment=com, id_purchases=new_op_id)
+        new_bonus_op = Bonus_Operations.create(id_card=id_card, date_time=date_time, summ=-(summ_dics), comment=com, id_purchases=new_op_id)
         
         new_bonus_op_del_id = new_bonus_op.id
 
@@ -72,7 +69,7 @@ def purchase(param):
 
     com = 'Начисление бонусов '+comment
 
-    new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=(summ-summ_dics)*level['perc']/100, comment=com, id_purchases=new_op_id)
+    new_bonus_op = Bonus_Operations.create(id_card=id_card, date_time=date_time, summ=(summ-summ_dics)*level['perc']/100, comment=com, id_purchases=new_op_id)
 
     new_bonus_op_add_id = new_bonus_op.id
 
@@ -81,13 +78,13 @@ def purchase(param):
 def revert(param):
     new_bonus_op_id = kwargs_get(param, 'new_bonus_op_id')
 
-    res = BonusOperations.select(BonusOperations.id_card, BonusOperations.date_time, BonusOperations.summ).where(BonusOperations.rowid==new_bonus_op_id)
+    res = Bonus_Operations.select(Bonus_Operations.id_card, Bonus_Operations.date_time, Bonus_Operations.summ).where(Bonus_Operations.rowid==new_bonus_op_id)
     
     purchases = list(res.dicts())
     
     comment = 'Отмена начисления бонусов '+purchases[0]['id_purchases']
 
-    new_bonus_op = BonusOperations.create(id_card=purchases[0]['id_card'], date_time=purchases[0]['date_time'], summ=-(purchases[0]['summ']), comment=comment, id_purchases=purchases[0]['id_purchases'])
+    new_bonus_op = Bonus_Operations.create(id_card=purchases[0]['id_card'], date_time=purchases[0]['date_time'], summ=-(purchases[0]['summ']), comment=comment, id_purchases=purchases[0]['id_purchases'])
 
     return {'new_bonus_op_id':new_bonus_op.id}
 
@@ -98,13 +95,12 @@ def accrue_bonuses(param):
     
     date_time = int(datetime.now().timestamp()*1000000)
     
-    new_bonus_op = BonusOperations.create(id_card=id_card, date_time=date_time, summ=summ, comment=comment)
+    new_bonus_op = Bonus_Operations.create(id_card=id_card, date_time=date_time, summ=summ, comment=comment)
 
     return {'new_bonus_op_id':new_bonus_op.id}
 
-
 def get_bonus_info(id_card):
-    res = BonusOperations.select(BonusOperations.id_card, BonusOperations.date_time, BonusOperations.summ, BonusOperations.comment, BonusOperations.id_purchases).where(BonusOperations.id_card==id_card).order_by(BonusOperations.date_time.desc())
+    res = Bonus_Operations.select(Bonus_Operations.id_card, Bonus_Operations.date_time, Bonus_Operations.summ, Bonus_Operations.comment, Bonus_Operations.id_purchases).where(Bonus_Operations.id_card==id_card).order_by(Bonus_Operations.date_time.desc())
     
     bonus_opperations = list(res.dicts()) 
     
@@ -120,7 +116,6 @@ def get_bonus_info(id_card):
 
     return {'summ':summ, 'summ_availible':summ_availible, 'bonus_opperations':bonus_opperations}
 
-
 def get_purchases(id_card, days=MAX_DAYS):
     d_t = datetime.now() + timedelta(days=-days)
     d_t_int = int(d_t.timestamp()*1000000)
@@ -134,16 +129,12 @@ def get_purchases(id_card, days=MAX_DAYS):
     return purchases
 
 def get_level(purchases):
-
     if len(purchases)==0:
         return LEVELS[DELAULT_LEVEL]
     
     summ_lasts_purchase = 0
 
     for x in purchases: 
-        #if (datetime.now()-x['date_time']).days<MIN_DAYS:
-        #    continue
-
         if (datetime.now()-x['date_time']).days>MAX_DAYS:
             break
         
@@ -155,8 +146,8 @@ def get_level(purchases):
     else:
         return LEVELS[DELAULT_LEVEL]
 
-def kwargs_get(qs, key, default = None):
-    res, *junk = qs.get(key, (default,))
+def kwargs_get(qs, key, default=None):
+    res = qs.get(key, (default))
     if default is None and res is default:
         raise KeyError(key)
     return res
