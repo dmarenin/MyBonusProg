@@ -5,5 +5,5 @@ if __name__ == '__main__':
     HOST = MYBONUSPROG_IP
     PORT = MYBONUSPROG_PORT
 
-    app.run(HOST, PORT, threaded=True) 
+    app.run(HOST, PORT, debug=True, threaded=True) 
 
