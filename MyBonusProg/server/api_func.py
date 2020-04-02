@@ -39,7 +39,10 @@ def purchase(param):
     type_oper = 1
     date_time = int(datetime.now().timestamp()*1000000)
 
-    if summ_dics>summ*SETTING_MAX_SUMM_PERCENT/100:
+    if summ<0:
+        type_oper = 2
+
+    elif summ_dics>summ*SETTING_MAX_SUMM_PERCENT/100:
         raise Exception('summ_dics is not correct')
 
     new_op = Purchases.create(id_card=id_card, id_oper=id_oper, summ=summ, summ_dics=summ_dics, comment=comment, type_oper=type_oper, date_time=date_time)
@@ -59,6 +62,12 @@ def purchase(param):
     new_bonus_op_del_id = None
     if summ_dics>0:
         com = 'Списание бонусов '+comment
+        new_bonus_op = Bonus_Operations.create(id_card=id_card, date_time=date_time, summ=-(summ_dics), comment=com, id_purchases=new_op_id)
+        
+        new_bonus_op_del_id = new_bonus_op.id
+
+    elif summ_dics<0:
+        com = 'Возврат бонусов '+comment
         new_bonus_op = Bonus_Operations.create(id_card=id_card, date_time=date_time, summ=-(summ_dics), comment=com, id_purchases=new_op_id)
         
         new_bonus_op_del_id = new_bonus_op.id
