@@ -108,6 +108,14 @@ def accrue_bonuses(param):
 
     return {'new_bonus_op_id':new_bonus_op.id}
 
+def delete_card(param):
+    id_card = kwargs_get(param, 'id_card')
+
+    Bonus_Operations.delete(id_card=id_card)
+    Purchases.delete(id_card=id_card)
+
+    return {'id_card':id_card}
+
 def get_bonus_info(id_card):
     res = Bonus_Operations.select(Bonus_Operations.id_card, Bonus_Operations.date_time, Bonus_Operations.summ, Bonus_Operations.comment, Bonus_Operations.id_purchases).where(Bonus_Operations.id_card==id_card).order_by(Bonus_Operations.date_time.desc())
     
