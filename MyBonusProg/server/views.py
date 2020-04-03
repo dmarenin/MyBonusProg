@@ -81,7 +81,7 @@ def accrue_bonuses():
     return result(res, args)
 
 @app.route('/delete_card', methods=['GET'])
-def accrue_bonuses():
+def delete_card():
     args = request.args.to_dict()
     
     res = api_func.delete_card(args)
