@@ -111,8 +111,8 @@ def accrue_bonuses(param):
 def delete_card(param):
     id_card = kwargs_get(param, 'id_card')
 
-    Bonus_Operations.delete(id_card=id_card)
-    Purchases.delete(id_card=id_card)
+    Bonus_Operations.delete().where(Bonus_Operations.id_card == id_card)
+    Purchases.delete().where(Purchases.id_card == id_card)
 
     return {'id_card':id_card}
 
